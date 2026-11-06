@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
-type Search = { redirect?: string; ref?: string };
+type Search = { redirect?: string | undefined; ref?: string | undefined };
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): Search => ({
-    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
-    ref: typeof s.ref === "string" ? s.ref : undefined,
+    redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined,
+    ref: typeof s["ref"] === "string" ? s["ref"] : undefined,
   }),
   head: () => ({
     meta: [
