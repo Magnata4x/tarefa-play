@@ -13,9 +13,10 @@ export function levelOf(aprovadas: number) {
   LEVELS.forEach((l, i) => {
     if (aprovadas >= l.min) idx = i;
   });
+  const cur = LEVELS[idx] ?? LEVELS[0];
   const next = LEVELS[idx + 1];
-  const progress = next ? ((aprovadas - LEVELS[idx].min) / (next.min - LEVELS[idx].min)) * 100 : 100;
-  return { idx, ...LEVELS[idx], next, progress };
+  const progress = next ? ((aprovadas - cur.min) / (next.min - cur.min)) * 100 : 100;
+  return { idx, name: cur.name as string, min: cur.min as number, emoji: cur.emoji as string, next, progress };
 }
 
 export const NETWORKS: Record<string, { label: string; emoji: string }> = {
