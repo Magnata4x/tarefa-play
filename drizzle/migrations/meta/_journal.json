@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793931422544,
+      "tag": "0000_tarefa_play_core",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793931448644,
+      "tag": "0001_proofs_storage_policies",
+      "breakpoints": true
+    }
+  ]
+}
