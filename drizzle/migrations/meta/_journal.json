@@ -22,6 +22,13 @@
       "when": 1794000000000,
       "tag": "0002_security_rpc_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794000000001,
+      "tag": "0003_f01_f03_atomic_wallet_rpcs",
+      "breakpoints": true
     }
   ]
 }
