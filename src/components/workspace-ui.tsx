@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Clock3, ArrowUpRight, ListChecks, CircleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export function TaskCard({ campaign }: { campaign: Tables<"campaigns"> }) {
   const network = NETWORKS[campaign.rede];
   return <article className="group flex min-h-64 flex-col rounded-lg border bg-card p-5 transition-colors hover:border-primary-glow/60"><div className="flex items-center justify-between"><span className="flex items-center gap-2 text-xs text-muted-foreground"><span className="grid size-9 place-items-center rounded-md bg-secondary text-lg">{network?.emoji ?? "🌐"}</span>{network?.label ?? campaign.rede}</span><span className="text-xs text-muted-foreground">{campaign.vagas_restantes} vagas</span></div><h3 className="mt-5 text-base font-semibold leading-relaxed">{campaign.titulo}</h3><p className="mt-1 text-xs text-muted-foreground">{TASK_TYPES[campaign.tipo_tarefa] ?? campaign.tipo_tarefa}</p><div className="mt-auto flex items-end justify-between pt-5"><div><p className="font-display text-xl font-bold text-earn">{brl(campaign.recompensa_usuario)}</p><p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><Clock3 className="size-3" />{campaign.tempo_minimo_seg}s mín.</p></div><Button variant="secondary" size="icon" asChild><Link to="/tarefas/$id" params={{ id: campaign.id }} aria-label={`Ver tarefa: ${campaign.titulo}`}><ArrowUpRight /></Link></Button></div></article>;
 }
-export function WorkspaceError({ error }: { error: Error }) {
+export function WorkspaceError({ error }: ErrorComponentProps) {
   const router = useRouter();
   return <div role="alert" className="space-y-4 py-12"><CircleAlert className="text-destructive" /><h1 className="text-xl font-bold">Não foi possível carregar esta página</h1><p className="text-sm text-muted-foreground">{error.message}</p><Button onClick={() => router.invalidate()}>Tentar novamente</Button></div>;
 }

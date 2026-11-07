@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { PageTitle, TaskCard, Empty } from "@/components/workspace-ui";
 
 export const Route = createFileRoute("/_authenticated/tarefas")({
-  validateSearch: (s: Record<string, unknown>): { rede?: string; tipo?: string; q?: string; sort?: string } => ({ rede: typeof s['rede'] === 'string' ? s['rede'] : undefined, tipo: typeof s['tipo'] === 'string' ? s['tipo'] : undefined, q: typeof s['q'] === 'string' ? s['q'] : undefined, sort: typeof s['sort'] === 'string' ? s['sort'] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { rede?: string | undefined; tipo?: string | undefined; q?: string | undefined; sort?: string | undefined } => ({ rede: typeof s['rede'] === 'string' ? s['rede'] : undefined, tipo: typeof s['tipo'] === 'string' ? s['tipo'] : undefined, q: typeof s['q'] === 'string' ? s['q'] : undefined, sort: typeof s['sort'] === 'string' ? s['sort'] : undefined }),
   head: () => pageHead("Tarefas disponíveis", "Encontre microtarefas por rede, tipo e recompensa."), component: Tasks,
 });
 function Tasks() {

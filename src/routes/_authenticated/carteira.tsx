@@ -1,7 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowUpRight, Wallet } from "lucide-react";
+import { toast } from "sonner";
+import { workspaceQuery } from "@/lib/workspace";
+import { pageHead } from "@/lib/page-head";
+import { supabase } from "@/integrations/supabase/client";
+import { brl, errMsg } from "@/lib/tp";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PageTitle, Stat, Empty, Status, dateLabel, useRefreshWorkspace } from "@/components/workspace-ui";
 
 export const Route = createFileRoute("/_authenticated/carteira")({
-  component: () => (
-    <div className="rounded-2xl border bg-card p-8 text-center text-muted-foreground">Em construção.</div>
-  ),
+  head: () => pageHead("Carteira e saques", "Consulte o saldo, extrato e solicitações de saque via Pix."), component: WalletPage,
 });
+function WalletPage() {
+  const { data } = useSuspenseQuery(workspaceQuery); const refresh = useRefreshWorkspace(); const [value,setValue] = useState(10); const [key,setKey] = useState(""); const [type,setType] = useState("aleatoria"); const [busy,setBusy] = useState(false); const [show,setShow] = useState(false);
+  const minimum = data.settings?.saque_minimo ?? 10; const withdrawals = data.withdrawals.filter(w => w.user_id === data.userId);
+  async function withdraw(e: React.FormEvent) { e.preventDefault(); setBusy(true); try { const { error } = await supabase.rpc("request_withdrawal", { _valor: value, _chave: key.trim(), _tipo: type }); if (error) throw error; toast.success("Saque solicitado e aguardando revisão."); setShow(false); setKey(""); await refresh(); } catch(e) { toast.error(errMsg(e)); } finally { setBusy(false); } }
+  return <><PageTitle title="Minha carteira" eyebrow="Seus ganhos, com transparência"><Button variant="earn" onClick={() => setShow(!show)}><ArrowUpRight />Solicitar saque</Button></PageTitle><div className="grid gap-6 border-y py-7 sm:grid-cols-3"><Stat label="Disponível para saque" value={brl(data.wallet?.saldo_disponivel)} earn /><Stat label="Em segurança" value={brl(data.wallet?.saldo_pendente)}>Créditos de contas novas aguardam liberação.</Stat><Stat label="Total ganho" value={brl(data.wallet?.total_ganho)} /></div>{show && <section className="border-b py-8"><h2 className="mb-4 text-xl font-bold">Solicitar saque via Pix</h2><form onSubmit={withdraw} className="grid items-end gap-4 sm:grid-cols-2"><label className="space-y-2 text-sm"><span>Valor (mínimo {brl(minimum)})</span><Input aria-label="Valor do saque" type="number" min={minimum} max={Number(data.wallet?.saldo_disponivel ?? 0)} step="0.01" required value={value} onChange={e => setValue(Number(e.target.value))} /></label><label className="space-y-2 text-sm"><span>Tipo de chave</span><select className="h-10 w-full rounded-md border bg-background px-3" value={type} onChange={e => setType(e.target.value)}><option value="aleatoria">Aleatória</option><option value="cpf">CPF</option><option value="email">E-mail</option><option value="telefone">Telefone</option></select></label><label className="space-y-2 text-sm"><span>Chave Pix</span><Input required value={key} onChange={e => setKey(e.target.value)} /></label><Button disabled={busy || Number(data.wallet?.saldo_disponivel ?? 0) < minimum} type="submit">{busy ? "Solicitando…" : "Confirmar solicitação"}</Button></form><p className="mt-4 text-xs text-muted-foreground">Um pedido a cada 24h. Este MVP não realiza transferência Pix automática.</p></section>}<section className="py-8"><h2 className="mb-5 flex items-center gap-2 text-xl font-bold"><Wallet className="size-5" />Extrato</h2>{data.transactions.length ? <div className="divide-y border-y">{data.transactions.map(t => <div key={t.id} className="flex items-center justify-between gap-4 py-4"><div><p className="text-sm font-semibold">{t.descricao || t.tipo}</p><p className="mt-1 text-xs text-muted-foreground">{dateLabel(t.created_at)}{!t.liberado && t.liberar_em ? ` · Disponível em ${dateLabel(t.liberar_em)}` : ""}</p></div><p className={Number(t.valor) < 0 ? "text-destructive" : "text-earn"}>{brl(t.valor)}</p></div>)}</div> : <Empty>Seu extrato está vazio. As primeiras aprovações aparecerão aqui.</Empty>}</section><section className="py-3"><h2 className="mb-5 text-xl font-bold">Solicitações de saque</h2>{withdrawals.length ? <div className="divide-y border-y">{withdrawals.map(w => <div key={w.id} className="flex justify-between gap-4 py-4"><div><p className="font-semibold">{brl(w.valor)}</p><p className="mt-1 text-xs text-muted-foreground">{dateLabel(w.created_at)} · {w.tipo_chave}</p></div><Status value={w.status} /></div>)}</div> : <Empty>Nenhum saque solicitado.</Empty>}</section></>;
+}
