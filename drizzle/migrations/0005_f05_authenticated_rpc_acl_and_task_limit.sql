@@ -20,30 +20,21 @@ $preflight$;
 
 --> statement-breakpoint
 
--- Every RPC below derives the caller from auth.uid(); anon and service-role calls
--- are not supported application flows. Internal trigger functions are not exposed.
 REVOKE ALL ON FUNCTION public.start_task(uuid) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.start_task(uuid) TO authenticated;
-
 REVOKE ALL ON FUNCTION public.submit_task(uuid, text, text, text) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.submit_task(uuid, text, text, text) TO authenticated;
-
 REVOKE ALL ON FUNCTION public.contest_submission(uuid) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.contest_submission(uuid) TO authenticated;
-
 REVOKE ALL ON FUNCTION public.admin_set_withdrawal(uuid, public.withdrawal_status) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.admin_set_withdrawal(uuid, public.withdrawal_status) TO authenticated;
-
 REVOKE ALL ON FUNCTION public.become_advertiser() FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.become_advertiser() TO authenticated;
-
 REVOKE ALL ON FUNCTION public.create_campaign(text, text, text, text, text, numeric, integer, integer, boolean, text) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.create_campaign(text, text, text, text, text, numeric, integer, integer, boolean, text) TO authenticated;
 
 --> statement-breakpoint
 
--- Serialize the per-user daily limit. Checking for an existing start before the
--- count also makes retries idempotent even when the daily quota is already full.
 CREATE OR REPLACE FUNCTION public.start_task(_campaign_id uuid)
 RETURNS timestamptz
 LANGUAGE plpgsql
@@ -61,8 +52,7 @@ BEGIN
     RAISE EXCEPTION 'Faça login' USING ERRCODE = '42501';
   END IF;
 
-  SELECT *
-    INTO p
+  SELECT * INTO p
     FROM public.profiles
    WHERE id = auth.uid()
    FOR UPDATE;
@@ -70,24 +60,20 @@ BEGIN
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Perfil não encontrado' USING ERRCODE = 'P0002';
   END IF;
-
   IF p.status <> 'ativo' THEN
     RAISE EXCEPTION 'Sua conta está %', p.status;
   END IF;
 
-  SELECT *
-    INTO c
+  SELECT * INTO c
     FROM public.campaigns
    WHERE id = _campaign_id;
 
   IF NOT FOUND OR c.status <> 'ativa' THEN
     RAISE EXCEPTION 'Campanha indisponível';
   END IF;
-
   IF c.advertiser_id = auth.uid() THEN
     RAISE EXCEPTION 'Você não pode executar sua própria campanha';
   END IF;
-
   IF c.vagas_restantes <= 0 THEN
     RAISE EXCEPTION 'Sem vagas restantes';
   END IF;
@@ -98,26 +84,21 @@ BEGIN
   END IF;
 
   IF EXISTS (
-    SELECT 1
-      FROM public.task_submissions
-     WHERE campaign_id = _campaign_id
-       AND user_id = auth.uid()
+    SELECT 1 FROM public.task_submissions
+     WHERE campaign_id = _campaign_id AND user_id = auth.uid()
   ) THEN
     RAISE EXCEPTION 'Você já executou esta tarefa';
   END IF;
 
-  SELECT started_at
-    INTO t
+  SELECT started_at INTO t
     FROM public.task_starts
-   WHERE campaign_id = _campaign_id
-     AND user_id = auth.uid();
+   WHERE campaign_id = _campaign_id AND user_id = auth.uid();
 
   IF t IS NOT NULL THEN
     RETURN t;
   END IF;
 
-  SELECT count(*)::integer
-    INTO hoje
+  SELECT count(*)::integer INTO hoje
     FROM public.task_starts
    WHERE user_id = auth.uid()
      AND started_at > date_trunc('day', now());
@@ -130,6 +111,9 @@ BEGIN
   VALUES (_campaign_id, auth.uid())
   RETURNING started_at INTO t;
 
+  -- The profile trigger protects streak fields; this trusted server-side RPC
+  -- explicitly enables the existing protected-field update path.
+  PERFORM set_config('app.trusted', '1', true);
   UPDATE public.profiles
      SET streak = CASE
        WHEN ultimo_dia_ativo = current_date THEN streak
@@ -145,7 +129,6 @@ $function$;
 
 --> statement-breakpoint
 
--- Explicitly reject anonymous calls and lock the target submission during contest.
 CREATE OR REPLACE FUNCTION public.contest_submission(_sub_id uuid)
 RETURNS void
 LANGUAGE plpgsql
@@ -159,11 +142,9 @@ BEGIN
     RAISE EXCEPTION 'Autenticação obrigatória' USING ERRCODE = '42501';
   END IF;
 
-  SELECT *
-    INTO s
+  SELECT * INTO s
     FROM public.task_submissions
-   WHERE id = _sub_id
-     AND user_id = auth.uid()
+   WHERE id = _sub_id AND user_id = auth.uid()
    FOR UPDATE;
 
   IF NOT FOUND
@@ -173,9 +154,7 @@ BEGIN
     RAISE EXCEPTION 'Não é possível contestar';
   END IF;
 
-  UPDATE public.task_submissions
-     SET status = 'contestada'
-   WHERE id = _sub_id;
+  UPDATE public.task_submissions SET status = 'contestada' WHERE id = _sub_id;
 END;
 $function$;
 
