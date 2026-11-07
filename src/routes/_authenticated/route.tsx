@@ -1,7 +1,10 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { Home, ListChecks, Wallet, ClipboardList, Megaphone, Shield, LogOut, Users, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useMe } from "@/hooks/useAuth";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { workspaceQuery } from "@/lib/workspace";
+import { Button } from "@/components/ui/button";
+import { WorkspaceError, WorkspaceNotFound } from "@/components/workspace-ui";
 import { brl } from "@/lib/tp";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -10,6 +13,9 @@ export const Route = createFileRoute("/_authenticated")({
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth", search: { redirect: location.href } });
   },
+  loader: ({ context }) => context.queryClient.ensureQueryData(workspaceQuery),
+  errorComponent: WorkspaceError,
+  notFoundComponent: WorkspaceNotFound,
   component: Shell,
 });
 
@@ -21,7 +27,8 @@ const nav = [
 ] as const;
 
 function Shell() {
-  const { data } = useMe();
+  const { data } = useSuspenseQuery(workspaceQuery);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const isAdmin = data?.roles.includes("admin");
   const linkCls =
@@ -59,16 +66,18 @@ function Shell() {
             <Link to="/perfil" className="rounded-lg p-2 text-muted-foreground hover:bg-accent" aria-label="Perfil">
               <User className="size-4" />
             </Link>
-            <button
+            <Button variant="ghost" size="icon"
               aria-label="Sair"
               className="rounded-lg p-2 text-muted-foreground hover:bg-accent"
               onClick={async () => {
+                await queryClient.cancelQueries();
+                queryClient.clear();
                 await supabase.auth.signOut();
-                navigate({ to: "/" });
+                navigate({ to: "/auth", replace: true });
               }}
             >
               <LogOut className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </header>
