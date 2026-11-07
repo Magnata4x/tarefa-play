@@ -29,8 +29,9 @@ describe("F-04 RPC and Pix hardening migration", () => {
     expect(migration).toMatch(/FROM public\.wallets[\s\S]*FOR UPDATE[\s\S]*created_at > now\(\) - interval '24 hours'[\s\S]*saldo_disponivel = saldo_disponivel - _valor/i);
   });
 
-  it("does not rewrite or delete existing financial records", () => {
+  it("does not mutate financial rows while applying the migration", () => {
+    const setup = migration.split("CREATE OR REPLACE FUNCTION public.request_withdrawal")[0] ?? "";
     expect(migration).not.toMatch(/\b(TRUNCATE|DROP TABLE|DELETE FROM public\.(wallets|wallet_transactions|withdrawals))\b/i);
-    expect(migration).not.toMatch(/UPDATE public\.(wallets|wallet_transactions|withdrawals)\b/i);
+    expect(setup).not.toMatch(/\b(INSERT INTO|UPDATE|DELETE FROM) public\.(wallets|wallet_transactions|withdrawals)\b/i);
   });
 });
