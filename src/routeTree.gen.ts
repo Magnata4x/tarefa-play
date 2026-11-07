@@ -22,6 +22,7 @@ import { Route as AuthenticatedIndicacoesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMinhasTarefasRouteImport } from './routes/_authenticated/minhas-tarefas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedTarefasRouteImport } from './routes/_authenticated/tarefas'
+import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const AuthenticatedTarefasRoute = AuthenticatedTarefasRouteImport.update({
   path: '/tarefas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedTarefasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,7 +107,8 @@ export interface FileRoutesByFullPath {
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/minhas-tarefas': typeof AuthenticatedMinhasTarefasRoute
   '/perfil': typeof AuthenticatedPerfilRoute
-  '/tarefas': typeof AuthenticatedTarefasRoute
+  '/tarefas': typeof AuthenticatedTarefasRouteWithChildren
+  '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,7 +122,8 @@ export interface FileRoutesByTo {
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/minhas-tarefas': typeof AuthenticatedMinhasTarefasRoute
   '/perfil': typeof AuthenticatedPerfilRoute
-  '/tarefas': typeof AuthenticatedTarefasRoute
+  '/tarefas': typeof AuthenticatedTarefasRouteWithChildren
+  '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,7 +139,8 @@ export interface FileRoutesById {
   '/_authenticated/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/_authenticated/minhas-tarefas': typeof AuthenticatedMinhasTarefasRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
-  '/_authenticated/tarefas': typeof AuthenticatedTarefasRoute
+  '/_authenticated/tarefas': typeof AuthenticatedTarefasRouteWithChildren
+  '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/minhas-tarefas'
     | '/perfil'
     | '/tarefas'
+    | '/tarefas/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/minhas-tarefas'
     | '/perfil'
     | '/tarefas'
+    | '/tarefas/$id'
   id:
     | '__root__'
     | '/'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/minhas-tarefas'
     | '/_authenticated/perfil'
     | '/_authenticated/tarefas'
+    | '/_authenticated/tarefas/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,8 +292,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTarefasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/tarefas/$id': {
+      id: '/_authenticated/tarefas/$id'
+      path: '/$id'
+      fullPath: '/tarefas/$id'
+      preLoaderRoute: typeof AuthenticatedTarefasIdRouteImport
+      parentRoute: typeof AuthenticatedTarefasRoute
+    }
   }
 }
+
+interface AuthenticatedTarefasRouteChildren {
+  AuthenticatedTarefasIdRoute: typeof AuthenticatedTarefasIdRoute
+}
+
+const AuthenticatedTarefasRouteChildren: AuthenticatedTarefasRouteChildren = {
+  AuthenticatedTarefasIdRoute: AuthenticatedTarefasIdRoute,
+}
+
+const AuthenticatedTarefasRouteWithChildren =
+  AuthenticatedTarefasRoute._addFileChildren(AuthenticatedTarefasRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
@@ -291,7 +321,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndicacoesRoute: typeof AuthenticatedIndicacoesRoute
   AuthenticatedMinhasTarefasRoute: typeof AuthenticatedMinhasTarefasRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
-  AuthenticatedTarefasRoute: typeof AuthenticatedTarefasRoute
+  AuthenticatedTarefasRoute: typeof AuthenticatedTarefasRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -302,7 +332,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndicacoesRoute: AuthenticatedIndicacoesRoute,
   AuthenticatedMinhasTarefasRoute: AuthenticatedMinhasTarefasRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
-  AuthenticatedTarefasRoute: AuthenticatedTarefasRoute,
+  AuthenticatedTarefasRoute: AuthenticatedTarefasRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

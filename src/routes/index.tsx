@@ -1,23 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, ShieldCheck, Play, CheckCheck, Wallet, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { pageHead } from "@/lib/page-head";
+import hero from "@/assets/hero-phone.jpg";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+export const Route = createFileRoute("/")({ head: () => pageHead("Microtarefas remuneradas", "Tarefa-Play: encontre microtarefas, envie sua comprovação e acompanhe seus ganhos. Os ganhos variam e não são garantidos."), component: Index });
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  const { user } = useAuth();
+  return <div><header className="relative z-20 border-b bg-background"><div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5"><Link to="/" className="font-display text-xl font-extrabold">Tarefa<span className="text-primary-glow">-Play</span><span className="ml-2 inline-block size-2 rounded-full bg-earn" /></Link><nav className="flex items-center gap-3"><Link to="/ajuda" className="hidden text-sm text-muted-foreground sm:block">Central de ajuda</Link><Button asChild variant="outline"><Link to={user ? "/dashboard" : "/auth"}>{user ? "Minha conta" : "Entrar"}<ArrowRight /></Link></Button></nav></div></header><main><section className="relative isolate min-h-[620px] overflow-hidden border-b"><img src={hero} alt="Celular com atividades digitais do Tarefa-Play" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" /><div className="absolute inset-0 -z-10 bg-background/80" /><div className="mx-auto max-w-6xl px-5 py-24 md:py-28"><p className="mb-7 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-earn"><Sparkles className="size-4" />Pequenas tarefas. Novas possibilidades.</p><h1 className="max-w-3xl font-display text-5xl font-extrabold leading-tight md:text-7xl">Tarefa-Play<span className="text-earn">.</span></h1><p className="mt-7 max-w-lg text-lg leading-8 text-foreground">Seu tempo tem valor. Faça microtarefas, comprove sua participação e acompanhe cada conquista.</p><div className="mt-9 flex flex-wrap gap-3"><Button asChild size="lg" variant="earn"><Link to={user ? "/tarefas" : "/auth"}>Encontrar tarefas<ArrowRight /></Link></Button><Button asChild size="lg" variant="outline"><Link to={user ? "/anunciante" : "/auth"} search={user ? {} : { redirect: "/anunciante" }}>Quero anunciar</Link></Button></div><p className="mt-7 flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="size-4" />18+ · Os ganhos variam e não são garantidos.</p></div></section><section className="mx-auto max-w-6xl px-5 py-16"><div className="flex items-end justify-between gap-4"><h2 className="text-2xl font-bold">Cada tarefa, um passo à frente.</h2><span className="hidden text-xs text-muted-foreground md:block">SIMPLES. TRANSPARENTE. NO SEU RITMO.</span></div><div className="mt-10 grid gap-8 md:grid-cols-3">{[{ icon: Play, title: "01. Escolha sua tarefa", text: "Vídeos, sites, pesquisas e outras atividades. Confira o valor e as instruções antes de começar." }, { icon: CheckCheck, title: "02. Envie a comprovação", text: "Cumpra o tempo mínimo e envie seu print ou comentário. Cada participação passa por validação." }, { icon: Wallet, title: "03. Acompanhe seu saldo", text: "Tarefas aprovadas viram crédito. Consulte o extrato e solicite seu saque a partir de R$ 10." }].map(item => <div key={item.title} className="border-t pt-6"><item.icon className="mb-5 size-6 text-primary-glow" /><h3 className="font-semibold">{item.title}</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">{item.text}</p></div>)}</div></section><section className="border-y bg-secondary/30"><div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 md:grid-cols-2"><h2 className="text-2xl font-bold">Perguntas frequentes</h2><div className="space-y-3">{[["Existe renda garantida?", "Não. Os ganhos dependem das tarefas disponíveis, da participação e da aprovação da comprovação."], ["Preciso pagar para fazer tarefas?", "Não. O executor não precisa depositar dinheiro para participar."], ["Quando o saldo fica disponível?", "Após aprovação. Para contas novas, o crédito pode ficar pendente por 24 horas."], ["O Pix já funciona?", "Este MVP registra solicitações de saque. A integração de pagamento e os depósitos do anunciante são demonstrativos."]].map(([q,a]) => <details key={q} className="border-b py-3"><summary className="cursor-pointer text-sm font-semibold">{q}</summary><p className="mt-3 text-sm leading-7 text-muted-foreground">{a}</p></details>)}</div></div></section></main><footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-8 text-xs text-muted-foreground"><span>Tarefa-Play · Microtarefas remuneradas</span><div className="flex gap-5"><Link to="/termos">Termos de uso</Link><Link to="/privacidade">Privacidade</Link><Link to="/ajuda">Ajuda</Link></div></footer></div>;
 }
