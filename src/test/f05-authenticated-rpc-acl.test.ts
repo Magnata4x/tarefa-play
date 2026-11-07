@@ -22,9 +22,10 @@ describe("F-05 authenticated RPC ACL and task limit migration", () => {
     }
   });
 
-  it("serializes daily starts by locking the caller profile", () => {
+  it("serializes daily starts by locking the caller profile and preserves protected streak updates", () => {
     expect(migration).toMatch(/FROM public\.profiles[\s\S]*FOR UPDATE[\s\S]*SELECT count\(\)::integer[\s\S]*daily_limit/i);
     expect(migration).toMatch(/SELECT started_at[\s\S]*IF t IS NOT NULL THEN\s+RETURN t/i);
+    expect(migration).toMatch(/set_config\('app\.trusted', '1', true\)[\s\S]*UPDATE public\.profiles/i);
   });
 
   it("requires an authenticated owner and locks a submission before contesting", () => {
