@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION public.release_my_pending()
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = pg_catalog, public
+SET search_path = ''
 AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
@@ -91,7 +91,7 @@ CREATE OR REPLACE FUNCTION public.request_withdrawal(
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = pg_catalog, public
+SET search_path = ''
 AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
@@ -180,7 +180,7 @@ RETURNS boolean
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = pg_catalog, public
+SET search_path = ''
 AS $function$
   SELECT coalesce(auth.uid() = _user_id, false)
      AND EXISTS (
