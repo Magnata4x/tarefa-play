@@ -2,40 +2,11 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1793931422544,
-      "tag": "0000_tarefa_play_core",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1793931448644,
-      "tag": "0001_proofs_storage_policies",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1794000000000,
-      "tag": "0002_security_rpc_guards",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1794000000001,
-      "tag": "0003_f01_f03_atomic_wallet_rpcs",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1794050000000,
-      "tag": "0004_f04_rpc_pix_validation",
-      "breakpoints": true
-    }
+    { "idx": 0, "version": "7", "when": 1793931422544, "tag": "0000_tarefa_play_core", "breakpoints": true },
+    { "idx": 1, "version": "7", "when": 1793931448644, "tag": "0001_proofs_storage_policies", "breakpoints": true },
+    { "idx": 2, "version": "7", "when": 1794000000000, "tag": "0002_security_rpc_guards", "breakpoints": true },
+    { "idx": 3, "version": "7", "when": 1794000000001, "tag": "0003_f01_f03_atomic_wallet_rpcs", "breakpoints": true },
+    { "idx": 4, "version": "7", "when": 1794050000000, "tag": "0004_f04_rpc_pix_validation", "breakpoints": true },
+    { "idx": 5, "version": "7", "when": 1794050000001, "tag": "0005_f05_authenticated_rpc_acl_and_task_limit", "breakpoints": true }
   ]
 }
