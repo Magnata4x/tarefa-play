@@ -29,5 +29,5 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-- **Keep `.env` tracked (not gitignored).** The publish build reads the public VITE_SUPABASE_* values from it; ignoring it ships a blank app. Never put service-role or other secrets in it.
+- **Public VITE_SUPABASE_* values have a fallback in `vite.config.ts` `define`.** `.env` is gitignored so publish builds lacked them and shipped a blank app. Never put service-role or other secrets there.
 - **Database changes have one owner: the Lovable agent.** Never apply migrations manually in parallel with Lovable, because concurrent changes desync the migration history.
