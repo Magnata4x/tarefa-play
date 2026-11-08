@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- **Database changes have one owner: the Lovable agent.** Never apply migrations manually in parallel with Lovable, because concurrent changes desync the migration history.
