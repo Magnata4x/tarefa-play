@@ -26,7 +26,7 @@ export function TaskCard({ campaign }: { campaign: Tables<"campaigns"> }) {
 }
 export function WorkspaceError({ error }: ErrorComponentProps) {
   const router = useRouter();
-  return <div role="alert" className="space-y-4 py-12"><CircleAlert className="text-destructive" /><h1 className="text-xl font-bold">Não foi possível carregar esta página</h1><p className="text-sm text-muted-foreground">{error.message}</p><Button onClick={() => router.invalidate()}>Tentar novamente</Button></div>;
+  return <div role="alert" className="space-y-4 py-12"><CircleAlert className="text-destructive" /><h1 className="text-xl font-bold">Não foi possível carregar esta página</h1><p className="text-sm text-muted-foreground">{error instanceof Error ? error.message : "Erro inesperado."}</p><Button onClick={() => router.invalidate()}>Tentar novamente</Button></div>;
 }
 export function WorkspaceNotFound() { return <Empty>Esta tarefa não está disponível.</Empty>; }
 export function useRefreshWorkspace() {
