@@ -6,6 +6,7 @@ import { workspaceQuery } from "@/lib/workspace";
 import { Button } from "@/components/ui/button";
 import { WorkspaceError, WorkspaceNotFound } from "@/components/workspace-ui";
 import { brl } from "@/lib/tp";
+import { Brand } from "@/components/brand";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -39,7 +40,7 @@ function Shell() {
       <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
           <Link to="/dashboard" className="font-display text-lg font-extrabold">
-            Tarefa<span className="text-gradient">-Play</span>
+            <Brand />
           </Link>
           <nav className="hidden flex-1 items-center gap-1 md:flex">
             {nav.map((n) => (

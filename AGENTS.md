@@ -31,3 +31,4 @@ use the editor.
 
 - **Public VITE_SUPABASE_* values have a fallback in `vite.config.ts` `define`.** `.env` is gitignored so publish builds lacked them and shipped a blank app. Never put service-role or other secrets there.
 - **Database changes have one owner: the Lovable agent.** Never apply migrations manually in parallel with Lovable, because concurrent changes desync the migration history.
+- Use the shared Brand component for app identity; store uploaded artwork through Lovable Assets and keep the derived favicon as a real file in public so browsers can load it directly.

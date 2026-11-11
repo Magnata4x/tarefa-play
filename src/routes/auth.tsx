@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Brand } from "@/components/brand";
 
 type Search = { redirect?: string | undefined; ref?: string | undefined };
 
@@ -98,7 +99,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-hero px-4 py-10">
       <div className="w-full max-w-md rounded-3xl border bg-card/90 p-8 shadow-glow backdrop-blur">
         <Link to="/" className="font-display text-2xl font-extrabold">
-          Tarefa<span className="text-gradient">-Play</span>
+          <Brand large />
         </Link>
         <h1 className="mt-6 text-2xl font-bold">{mode === "in" ? "Bem-vindo de volta" : "Crie sua conta"}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
