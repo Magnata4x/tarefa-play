@@ -1,5 +1,6 @@
 # Tarefa-Play continuation
 
+- [x] Audit completed phases without changing app or database; findings saved in Files on 2026-11-23. Live authenticated verification remains blocked by paused Cloud.
 - [ ] Passo 2: conclude the eight read-only live database audit results and validate the proposed 0006 prerequisites. Blocked: Lovable Cloud database is paused; no 0006 specification/file is available. Partial report saved in Files on 2026-11-11.
 
 - [ ] Restore working home, navigation and metadata.
