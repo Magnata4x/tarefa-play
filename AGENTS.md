@@ -33,3 +33,4 @@ use the editor.
 - **Database changes have one owner: the Lovable agent.** Never apply migrations manually in parallel with Lovable, because concurrent changes desync the migration history.
 - Use the shared Brand component for app identity; store uploaded artwork through Lovable Assets and keep the derived favicon as a real file in public so browsers can load it directly.
 - Keep role labels and navigation decisions in user-access; map existing database roles without renaming them, and treat UI gates as presentation only while database policies and authenticated RPCs enforce data access.
+- Keep campaign creation and review controls in shared workspace components backed by existing authenticated RPCs; never credit deposits or mark withdrawals paid without a verified payment flow.
